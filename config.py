@@ -2,6 +2,7 @@
 
 CONFIG = {"phantomjs_bin": "./phantomjs-1.8.1-linux-i686/bin/phantomjs", # full path
           "firefox_bin": "/home/gb/bin/firefox/firefox", # full path or None
+          "visible": False # True = use firefox, False = use phantomjs
           "auth": None, # if you need authentication to the webpage
           "hrt_url": "http://localhost:8899/%s/__hrt__/?",
           "url_delimiter": "__hrt__",

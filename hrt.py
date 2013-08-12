@@ -26,6 +26,6 @@ config.set("url", url)
 
 s = server.start()
 
-client.open_url(url, visible = True)
+client.open_url(url, visible = config.get("visible"))
 
 s.stop()
