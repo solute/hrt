@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+import time
+
 CONFIG = {"phantomjs_bin": "./phantomjs-1.8.1-linux-i686/bin/phantomjs", # full path
           "firefox_bin": "/home/gb/bin/firefox/firefox", # full path or None
           "visible": False, # True = use firefox, False = use phantomjs
@@ -11,12 +13,27 @@ CONFIG = {"phantomjs_bin": "./phantomjs-1.8.1-linux-i686/bin/phantomjs", # full 
 
           "url": None, # will be set in hrt.py
           "dot_file": "graph.dot", # temporary filename
-          "out_file": "graph.gif",
-          "out_format": "gif"} # "svg", "isvg"
+          "out_file": "graph_%Y-%m-%d_%H-%M-%S.%E",
+          "out_format": "gif"} # "gif", "svg", "isvg", "json"
+
+
+
+def handle_fn_template(fn):
+
+  fn = fn.replace("%E", get("out_format"))
+
+  fn = time.strftime(fn) # use strftime-format-template
+
+  return fn
 
 
 def get(key):
-    return CONFIG[key]
+    value = CONFIG[key]
+
+    if key == "out_file":
+      value = handle_fn_template(value)
+
+    return value
 
 
 def set(key, value):

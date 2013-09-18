@@ -32,7 +32,7 @@ class HTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if url.startswith("//"):
             url = "http:" + url
         elif not url.startswith("http"):
-            url = base_href(origin_url) + url
+            url = base_href(origin_url) + url.lstrip("/")
 
         parsed_url = urlparse.urlparse(url)
 
@@ -120,7 +120,9 @@ class HTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 ##        self.write_to_disk(url, content)
 
-        self.server.visualizer.add_relation(url = url, origin_url = origin_url)
+
+        if url != config.get("url"): # omit self reference to root
+            self.server.visualizer.add_relation(url = url, origin_url = origin_url)
 
     def log_message(self, *args):
         pass
@@ -171,6 +173,8 @@ class HTTPServer(BaseHTTPServer.HTTPServer):
         for i in range(3):
             t = threading.Thread(target = ping)
             t.start()
+
+        self.server_close()
 
 
 class ServerThread(threading.Thread):

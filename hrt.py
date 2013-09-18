@@ -15,12 +15,13 @@ Usage
 
 """
 
+import sys, time
 
 import server
 import config
 import client
 
-url = "http://example.com/"
+url = sys.argv[1]
 
 config.set("url", url)
 

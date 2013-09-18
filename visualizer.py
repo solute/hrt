@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import urlparse, os
+import urlparse, os, json
 import config
 
 svgpan_js = """
@@ -116,6 +116,16 @@ class Visualizer(object):
         self.graph.append((url, origin_url))
 
 
+    def visualize_json(self):
+
+        graph = []
+        for entity, origin in self.graph:
+            graph.append({"entity": entity, "origin": origin})
+
+        f = open(config.get("out_file"), "wb")
+        f.write(json.dumps(graph, indent = 4, separators = (",", ": ")))
+        f.close()
+
     def visualize_gif(self):
         """ Creates a gif """
         self.create_dot()
@@ -166,6 +176,8 @@ class Visualizer(object):
             return self.visualize_gif()
         elif config.get("out_format") == "isvg":
             return self.visualize_isvg()
+        elif config.get("out_format") == "json":
+            return self.visualize_json()
 
 
     def create_dot(self):
@@ -209,13 +221,14 @@ class Visualizer(object):
         return False
 
     def pretty_url(self, url):
-        parsed = urlparse.urlparse(url)
-        path = os.path.basename(parsed.path)
-        if "?" in path:
-            path = path[:path.index("?")]
-        if ";" in path:
-            path = path[:path.index(";")]
-        if len(path) > 32:
-            path = path[:12] + "..." + path[-12:]
-        return parsed.netloc + "/" + path
 
+        def snipper(el):
+            if len(el)> 32:
+                el = el[:12] + "..." + el[-12:]
+            return el
+
+        parsed = urlparse.urlparse(url)
+
+        parsed = [snipper(el) for el in list(parsed)[1:] if el]
+
+        return "\\n".join(parsed)
